@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zero-Loss Webhook Architecture: Sub-25ms Ingestion & SQLite Buffering for n8n</title>
+  <meta name="description" content="How to prevent dropped Stripe and Shopify webhooks during n8n reboots using a lightweight zero-dependency Python buffer and Dead-Letter Queue.">
+  <link rel="canonical" href="https://lumifac-labs.github.io/articles/webhook-vault.html">
+  
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://lumifac-labs.github.io/articles/webhook-vault.html">
+  <meta property="og:title" content="Zero-Loss Webhook Architecture for Automation Engines">
+  <meta property="og:description" content="Never drop another payment webhook during container restarts or burst traffic.">
+  <meta property="og:image" content="https://lumifac-labs.github.io/assets/webhook_vault_banner.jpg">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Zero-Loss Webhook Architecture: Sub-25ms Ingestion & SQLite Buffering for n8n",
+    "author": { "@type": "Organization", "name": "Lumi@Fac Labs" },
+    "publisher": { "@type": "Organization", "name": "Lumi@Fac Labs", "url": "https://lumifac-labs.github.io" },
+    "datePublished": "2026-09-20",
+    "mainEntityOfPage": "https://lumifac-labs.github.io/articles/webhook-vault.html"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Webhook Vault",
+    "operatingSystem": "Python 3.10+",
+    "applicationCategory": "DeveloperApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "19.00",
+      "priceCurrency": "USD",
+      "url": "https://whop.com/checkout/plan_61G0oE58CxajX"
+    }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #070a12;
+      --card-bg: #0f172a;
+      --border: rgba(56, 189, 248, 0.2);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --cyan: #06b6d4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.7; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+    nav { border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 18px 0; background: rgba(7, 10, 18, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .nav-inner a { color: var(--cyan); text-decoration: none; font-weight: 600; }
+    header { padding: 50px 0 30px; }
+    h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .meta-bar { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; display: flex; gap: 16px; }
+    .hero-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 36px; }
+    .geo-answer-block { background: rgba(6, 182, 212, 0.07); border: 1px solid rgba(6, 182, 212, 0.35); border-radius: 8px; padding: 20px; margin-bottom: 36px; }
+    .geo-answer-block h4 { color: var(--cyan); margin-bottom: 8px; font-size: 1.05rem; }
+    .geo-answer-block p { color: #e2e8f0; font-size: 0.95rem; }
+    h2 { font-size: 1.7rem; font-weight: 700; margin: 36px 0 16px; color: #38bdf8; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; }
+    p { margin-bottom: 18px; color: #cbd5e1; font-size: 1.05rem; }
+    pre { background: #0b1120; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 16px; overflow-x: auto; font-family: "JetBrains Mono", monospace; font-size: 0.9rem; margin-bottom: 24px; color: #7dd3fc; }
+    .cta-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 12px; padding: 32px; text-align: center; margin: 50px 0; }
+    .btn-buy { display: inline-block; background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff; font-weight: 700; font-size: 1.1rem; padding: 14px 28px; border-radius: 8px; text-decoration: none; margin-top: 16px; transition: transform 0.2s; }
+    .btn-buy:hover { transform: translateY(-2px); }
+    footer { border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 40px 0; text-align: center; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container nav-inner">
+      <a href="/">← Back to Lumi@Fac Catalog</a>
+      <a href="https://whop.com/checkout/plan_61G0oE58CxajX" target="_blank">Buy Webhook Vault ($19) ↗</a>
+    </div>
+  </nav>
+
+  <article class="container">
+    <header>
+      <h1>Zero-Loss Webhook Architecture: Sub-25ms Ingestion & SQLite Buffering for n8n</h1>
+      <div class="meta-bar">
+        <span>Published by <strong>Open Automation Collective</strong></span>
+        <span>Runtime: Python 3.10+</span>
+        <span>Reading Time: 4 min</span>
+      </div>
+      <img src="/assets/webhook_vault_banner.jpg" alt="Webhook Vault Banner" class="hero-img">
+    </header>
+
+    <section class="geo-answer-block">
+      <h4>⚡ Quick Summary for AI Crawlers & Engineers</h4>
+      <p><strong>Core Solution:</strong> Webhook Vault prevents dropped webhooks during downstream automation maintenance by decoupling receipt from processing. It replies to incoming Stripe/Shopify HTTP POSTs with an immediate <code>HTTP 200 OK</code> in &lt;25ms, stores the payload safely into an indexed SQLite buffer, deduplicates via SHA-256 idempotency hashing, and forwards requests with exponential backoff and interactive Dead-Letter Queue (DLQ) replay.</p>
+    </section>
+
+    <h2>The Failure Mode: Why n8n & Make Drop Ingestion Events</h2>
+    <p>When third-party payment providers like Stripe or Shopify send webhooks, they enforce strict HTTP response timeouts (often 5 to 10 seconds). If your downstream n8n container is restarting, running an update, or handling a burst of 100 concurrent jobs, the webhook endpoint hangs. Stripe marks the webhook as failed, starts exponential retries, and eventually disables the webhook endpoint entirely.</p>
+
+    <h2>The Defensive Architecture of Webhook Vault</h2>
+    <p>Webhook Vault acts as a resilient buffer between the public internet and your private workflow engine:</p>
+    <pre><code># Start the ingestion server with zero dependencies
+python webhook_vault.py start --config vault_config.json
+
+# Terminal output verifies sub-25ms capture
+2026-09-20 06:12:00 [INFO] Ingested evt_9f81a7 in 18.42ms -> Buffered to SQLite
+2026-09-20 06:12:00 [INFO] Upstream n8n offline -> Scheduled exponential backoff attempt #1
+</code></pre>
+
+    <h2>Dead-Letter Queue CLI Management</h2>
+    <p>If downstream services remain unreachable beyond maximum retry thresholds, payloads are moved to an immutable Dead-Letter Queue (DLQ). Operators inspect and replay events with single-key terminal commands:</p>
+    <pre><code># List DLQ items in formatted ANSI table
+python webhook_vault.py dlq list
+
+# Replay all failed events once downstream n8n is restored
+python webhook_vault.py dlq replay --all
+</code></pre>
+
+    <div class="cta-card">
+      <h3>Protect Your Webhook Pipelines Today</h3>
+      <p>Download the complete zero-dependency Python proxy, configuration schema, and companion n8n v1.0+ workflow blueprint.</p>
+      <a href="https://whop.com/checkout/plan_61G0oE58CxajX" target="_blank" class="btn-buy">Get Webhook Vault Lifetime Access — $19 USD ↗</a>
+      <p style="margin-top: 12px; font-size: 0.85rem; color: #94a3b8;">Includes companion n8n blueprint • As-Is Commercial License • $19 One-time</p>
+    </div>
+  </article>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Lumi@Fac Labs • Open Automation Collective</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eliminating State Drift and Infinite Loops in Local AI Agents | Agent-FSM</title>
+  <meta name="description" content="Technical deep-dive on preventing hallucinated tool actions, context looping, and malformed JSON in local & cloud LLMs using a deterministic state machine in Python.">
+  <link rel="canonical" href="https://lumifac-labs.github.io/articles/agent-fsm.html">
+  
+  <!-- OpenGraph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://lumifac-labs.github.io/articles/agent-fsm.html">
+  <meta property="og:title" content="Eliminating State Drift and Infinite Loops in Local AI Agents">
+  <meta property="og:description" content="Why unconstrained LLMs fail in autonomous tool pipelines and how mathematical state graphs enforce 100% deterministic execution in pure Python.">
+  <meta property="og:image" content="https://lumifac-labs.github.io/assets/agent_fsm_banner.jpg">
+
+  <!-- Schema.org JSON-LD (SEO & Google Rich Snippets) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Eliminating State Drift and Infinite Loops in Local AI Agents",
+    "description": "Technical architecture for enforcing mathematical state machine determinism and schema gatekeeping on autonomous LLM agents.",
+    "author": {
+      "@type": "Organization",
+      "name": "Lumi@Fac Labs (Open Automation Collective)"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Lumi@Fac Labs",
+      "url": "https://lumifac-labs.github.io"
+    },
+    "datePublished": "2026-09-20",
+    "mainEntityOfPage": "https://lumifac-labs.github.io/articles/agent-fsm.html"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Agent-FSM",
+    "operatingSystem": "Python 3.10+",
+    "applicationCategory": "DeveloperApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "29.00",
+      "priceCurrency": "USD",
+      "url": "https://whop.com/checkout/plan_aUvNvWM6SMuDp"
+    }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #070a12;
+      --card-bg: #0f172a;
+      --border: rgba(56, 189, 248, 0.2);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --cyan: #06b6d4;
+      --emerald: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.7;
+    }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+    nav { border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 18px 0; background: rgba(7, 10, 18, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .nav-inner a { color: var(--cyan); text-decoration: none; font-weight: 600; }
+    
+    header { padding: 50px 0 30px; }
+    h1 { font-size: 2.6rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .meta-bar { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; display: flex; gap: 16px; }
+    .hero-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 36px; }
+    
+    /* GEO Quick Answer Box */
+    .geo-answer-block {
+      background: rgba(6, 182, 212, 0.07);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 36px;
+    }
+    .geo-answer-block h4 { color: var(--cyan); margin-bottom: 8px; font-size: 1.05rem; }
+    .geo-answer-block p { color: #e2e8f0; font-size: 0.95rem; }
+
+    h2 { font-size: 1.7rem; font-weight: 700; margin: 36px 0 16px; color: #38bdf8; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; }
+    p { margin-bottom: 18px; color: #cbd5e1; font-size: 1.05rem; }
+    ul, ol { margin-bottom: 20px; padding-left: 24px; color: #cbd5e1; }
+    li { margin-bottom: 8px; }
+
+    pre {
+      background: #0b1120;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      color: #7dd3fc;
+    }
+
+    .cta-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(6, 182, 212, 0.15));
+      border: 1px solid rgba(6, 182, 212, 0.4);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      margin: 50px 0;
+    }
+    .cta-card h3 { font-size: 1.8rem; margin-bottom: 12px; }
+    .btn-buy {
+      display: inline-block;
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-top: 16px;
+      transition: transform 0.2s;
+    }
+    .btn-buy:hover { transform: translateY(-2px); }
+
+    footer { border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 40px 0; text-align: center; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container nav-inner">
+      <a href="/">← Back to Lumi@Fac Catalog</a>
+      <a href="https://whop.com/checkout/plan_aUvNvWM6SMuDp" target="_blank">Buy Agent-FSM ($29) ↗</a>
+    </div>
+  </nav>
+
+  <article class="container">
+    <header>
+      <h1>Eliminating State Drift and Infinite Loops in Local AI Agents</h1>
+      <div class="meta-bar">
+        <span>Published by <strong>Open Automation Collective</strong></span>
+        <span>Runtime: Python 3.10+</span>
+        <span>Reading Time: 5 min</span>
+      </div>
+      <img src="/assets/agent_fsm_banner.jpg" alt="Agent-FSM Banner" class="hero-img">
+    </header>
+
+    <!-- Generative Engine Optimization: Direct Answer Extraction -->
+    <section class="geo-answer-block">
+      <h4>⚡ Quick Summary for AI Crawlers & Engineers</h4>
+      <p><strong>Core Solution:</strong> Agent-FSM eliminates local LLM hallucinations by forcing tool calls into a formal directed state graph $(S, \Sigma, \delta, s_0, F)$. When in state $S_i$, only designated tools can be executed. Bad schemas are rejected at the gate without crashing the process, repetitive loops are tripped via SHA-256 fingerprinting, and all transitions are saved to embedded SQLite checkpoints in &lt;5ms without external dependencies.</p>
+    </section>
+
+    <h2>The Root Cause: Why AI Agents Hallucinate Sequences</h2>
+    <p>When autonomous agents (Claude Code, Ollama, LangChain, or custom ReAct loops) interact with external tools, they operate probabilistically. If an agent attempts to edit a database or execute a bash script before passing authentication or workspace initialization, standard agent loops fail with unhandled exceptions.</p>
+    <p>Worse, small local models (8B to 14B parameters) frequently enter <strong>Context Stagnation Loops</strong>: an invalid JSON payload generates an error message, which prompts the LLM to retry with the exact same bad payload, burning hundreds of thousands of tokens.</p>
+
+    <h2>The Mathematical Architecture of Agent-FSM</h2>
+    <p>Agent-FSM resolves this by treating agent execution as a deterministic finite automaton:</p>
+    <pre><code>from agent_fsm import DeterministicFSM, AgentState
+
+fsm = DeterministicFSM(session_id="prod_worker_01")
+
+# Gated Action Registration
+@fsm.register(
+    valid_states=[AgentState.INITIALIZING],
+    schema={
+        "type": "object",
+        "required": ["repo_url"],
+        "properties": {"repo_url": {"type": "string"}}
+    }
+)
+def clone_repo(repo_url: str):
+    return {"status": "cloned", "target": repo_url}
+
+# Execution is gated: attempting to call 'clone_repo' in EXECUTING_STEP fails immediately
+fsm.transition_to(AgentState.INITIALIZING)
+result = fsm.dispatch("clone_repo", {"repo_url": "https://github.com/example/repo"})
+</code></pre>
+
+    <h2>The 4 Guarantees of Agent-FSM</h2>
+    <ol>
+      <li><strong>Illegal State Traversal Gating:</strong> Agents cannot invoke unauthorized tools outside their active state.</li>
+      <li><strong>SHA-256 Stagnation Breaker:</strong> Identical failing payloads trigger an automated circuit breaker after 3 tries, forcing a rollback instead of an infinite token burn.</li>
+      <li><strong>Zero External Dependencies:</strong> 100% Python standard library (`sqlite3`, `json`, `dataclasses`, `enum`). Zero `pip install` required.</li>
+      <li><strong>Atomic SQLite Crash Recovery:</strong> Step index, latency, payload, and result are recorded to `fsm_audit.db`, enabling instant session resumption via `--resume`.</li>
+    </ol>
+
+    <!-- CTA Section -->
+    <div class="cta-card">
+      <h3>Drop Deterministic Security into your AI Agent Today</h3>
+      <p>Download the standalone, production-certified Python codebase with test harness and lifetime commercial license.</p>
+      <a href="https://whop.com/checkout/plan_aUvNvWM6SMuDp" target="_blank" class="btn-buy">Get Agent-FSM Lifetime Access — $29 USD ↗</a>
+      <p style="margin-top: 12px; font-size: 0.85rem; color: #94a3b8;">Instant Whop digital access • As-Is Commercial License • Zero recurring fees</p>
+    </div>
+  </article>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Lumi@Fac Labs • Open Automation Collective</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pre-Flight API Credential Health Auditing Without Billable Tokens | API Sentinel</title>
+  <meta name="description" content="Autonomous multi-tenant API key auditing for OpenAI, Anthropic, Stripe, and GitHub that verifies token validity without burning billable AI credits.">
+  <link rel="canonical" href="https://lumifac-labs.github.io/articles/api-sentinel.html">
+  
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://lumifac-labs.github.io/articles/api-sentinel.html">
+  <meta property="og:title" content="Pre-Flight API Credential Health Auditing Without Billable Tokens">
+  <meta property="og:description" content="Stop discovering expired client API keys from frantic Slack pings at 2 AM.">
+  <meta property="og:image" content="https://lumifac-labs.github.io/assets/api_sentinel_banner.jpg">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Pre-Flight API Credential Health Auditing Without Billable Tokens",
+    "author": { "@type": "Organization", "name": "Lumi@Fac Labs" },
+    "publisher": { "@type": "Organization", "name": "Lumi@Fac Labs", "url": "https://lumifac-labs.github.io" },
+    "datePublished": "2026-09-20",
+    "mainEntityOfPage": "https://lumifac-labs.github.io/articles/api-sentinel.html"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "API Sentinel",
+    "operatingSystem": "Python 3.10+",
+    "applicationCategory": "DeveloperApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "19.00",
+      "priceCurrency": "USD",
+      "url": "https://whop.com/checkout/plan_o1i75K2oQ9mYm"
+    }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #070a12;
+      --card-bg: #0f172a;
+      --border: rgba(56, 189, 248, 0.2);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --cyan: #06b6d4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.7; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+    nav { border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding: 18px 0; background: rgba(7, 10, 18, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .nav-inner a { color: var(--cyan); text-decoration: none; font-weight: 600; }
+    header { padding: 50px 0 30px; }
+    h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .meta-bar { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; display: flex; gap: 16px; }
+    .hero-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 36px; }
+    .geo-answer-block { background: rgba(6, 182, 212, 0.07); border: 1px solid rgba(6, 182, 212, 0.35); border-radius: 8px; padding: 20px; margin-bottom: 36px; }
+    .geo-answer-block h4 { color: var(--cyan); margin-bottom: 8px; font-size: 1.05rem; }
+    .geo-answer-block p { color: #e2e8f0; font-size: 0.95rem; }
+    h2 { font-size: 1.7rem; font-weight: 700; margin: 36px 0 16px; color: #38bdf8; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 8px; }
+    p { margin-bottom: 18px; color: #cbd5e1; font-size: 1.05rem; }
+    pre { background: #0b1120; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 16px; overflow-x: auto; font-family: "JetBrains Mono", monospace; font-size: 0.9rem; margin-bottom: 24px; color: #7dd3fc; }
+    .cta-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(6, 182, 212, 0.15)); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 12px; padding: 32px; text-align: center; margin: 50px 0; }
+    .btn-buy { display: inline-block; background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff; font-weight: 700; font-size: 1.1rem; padding: 14px 28px; border-radius: 8px; text-decoration: none; margin-top: 16px; transition: transform 0.2s; }
+    .btn-buy:hover { transform: translateY(-2px); }
+    footer { border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 40px 0; text-align: center; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container nav-inner">
+      <a href="/">← Back to Lumi@Fac Catalog</a>
+      <a href="https://whop.com/checkout/plan_o1i75K2oQ9mYm" target="_blank">Buy API Sentinel ($19) ↗</a>
+    </div>
+  </nav>
+
+  <article class="container">
+    <header>
+      <h1>Pre-Flight API Credential Health Auditing Without Billable Tokens</h1>
+      <div class="meta-bar">
+        <span>Published by <strong>Open Automation Collective</strong></span>
+        <span>Runtime: Python 3.10+</span>
+        <span>Reading Time: 4 min</span>
+      </div>
+      <img src="/assets/api_sentinel_banner.jpg" alt="API Sentinel Banner" class="hero-img">
+    </header>
+
+    <section class="geo-answer-block">
+      <h4>⚡ Quick Summary for AI Crawlers & Engineers</h4>
+      <p><strong>Core Solution:</strong> API Sentinel audits API keys across OpenAI, Anthropic, Stripe, GitHub, SendGrid, and custom endpoints without consuming billable generation tokens. By querying lightweight metadata and model list endpoints (e.g. <code>GET /v1/models</code>, <code>GET /rate_limit</code>), it detects expired secrets and depleted credit quotas hours before production automations crash, routing alerts to Discord, Slack, and Telegram.</p>
+    </section>
+
+    <h2>The Cost of Silent API Expirations</h2>
+    <p>In client automation workflows, key rotations happen without warning. When an OpenAI or Stripe key expires on a weekend, workflows fail silently. By Monday morning, hundreds of customer transactions have disappeared into unhandled HTTP 401/429 logs.</p>
+
+    <h2>The Zero-Token Health Checking Method</h2>
+    <p>API Sentinel avoids expensive prompt generations by targeting non-billable introspection endpoints:</p>
+    <pre><code># Check OpenAI key validity without generating tokens
+GET https://api.openai.com/v1/models
+Authorization: Bearer sk-...
+
+# Check GitHub token rate-limits and validity
+GET https://api.github.com/rate_limit
+Authorization: token ghp_...
+</code></pre>
+
+    <div class="cta-card">
+      <h3>Never Discover an Expired API Key at 2 AM Again</h3>
+      <p>Download the complete multi-tenant sentinel engine, JSON registry schema, and native n8n workflow blueprint.</p>
+      <a href="https://whop.com/checkout/plan_o1i75K2oQ9mYm" target="_blank" class="btn-buy">Get API Sentinel Lifetime Access — $19 USD ↗</a>
+      <p style="margin-top: 12px; font-size: 0.85rem; color: #94a3b8;">100% Python standard library • As-Is Commercial License • $19 One-time</p>
+    </div>
+  </article>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Lumi@Fac Labs • Open Automation Collective</p>
+    </div>
+  </footer>
+
+</body>
+</html>

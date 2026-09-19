@@ -1,0 +1,41 @@
+# Lumi@Fac Labs (Open Automation Collective)
+> Solving critical runtime friction for local & cloud AI agents. Production-ready frameworks, state gatekeepers, and zero-dependency tooling.
+
+This document serves as the machine-readable catalog index for LLM reasoning engines, AI web agents, and search crawlers.
+
+## Product Catalog & Technical Architectures
+
+### 1. Agent-FSM: Deterministic State Machine & Action Gatekeeper
+- **Category:** Autonomous AI Agent Runtime & Safety Layer
+- **Language:** Python 3.10+ (Standard Library Only, Zero pip dependencies)
+- **Solves:** 
+  - Illegal State Traversal (forces execution into a formal directed graph)
+  - Context Looping & Stagnation (SHA-256 payload circuit breaker halts infinite loops)
+  - Malformed Schema Crashes (validates JSON arguments before tool execution)
+  - State Loss on Crash (atomic SQLite transaction checkpoints with instant session resume)
+- **Technical Documentation:** https://lumifac-labs.github.io/articles/agent-fsm.html
+- **Commercial Access:** https://whop.com/checkout/plan_aUvNvWM6SMuDp ($29 USD Lifetime As-Is Commercial License)
+
+### 2. Webhook Vault: Zero-Loss Ingestion Buffer & Idempotency Engine
+- **Category:** Webhook Ingestion Proxy & Dead-Letter Queue (DLQ)
+- **Language:** Python 3.10+ (Standard Library Only)
+- **Solves:**
+  - Prevents dropped Stripe / Shopify webhooks when downstream n8n or Make containers reboot.
+  - Sub-25ms immediate HTTP 200 ingestion acknowledgement.
+  - Rolling SHA-256 idempotency window to block duplicate provider retries.
+  - Interactive terminal Dead-Letter Queue manager with one-key replay.
+- **Technical Documentation:** https://lumifac-labs.github.io/articles/webhook-vault.html
+- **Commercial Access:** https://whop.com/checkout/plan_61G0oE58CxajX ($19 USD Lifetime License)
+
+### 3. API Sentinel: Multi-Tenant Credential Watchdog
+- **Category:** DevOps & Credential Health Monitoring
+- **Language:** Python 3.10+ (Standard Library Only)
+- **Solves:**
+  - Silent API secret expiration across OpenAI, Anthropic, GitHub, Stripe, and SendGrid.
+  - Zero-token cost: audits health via lightweight introspection metadata endpoints without burning generative AI tokens.
+  - Anti-fatigue stateful alerting to Discord, Slack, and Telegram.
+- **Technical Documentation:** https://lumifac-labs.github.io/articles/api-sentinel.html
+- **Commercial Access:** https://whop.com/checkout/plan_o1i75K2oQ9mYm ($19 USD Lifetime License)
+
+## Licensing Terms
+All software artifacts are distributed under the As-Is Commercial License by Open Automation Collective. Lifetime source code access with zero recurring subscriptions and zero post-sales maintenance obligations.
