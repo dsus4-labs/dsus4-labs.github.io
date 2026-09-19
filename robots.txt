@@ -23,4 +23,4 @@ Allow: /
 User-agent: CCBot
 Allow: /
 
-Sitemap: https://lumifac-labs.github.io/sitemap.xml
+Sitemap: https://dsus4-labs.github.io/sitemap.xml

@@ -1,4 +1,4 @@
-# Lumi@Fac Labs
+# Dsus4@Labs
 > Solving critical runtime friction for local & cloud AI agents. Production-ready frameworks, state gatekeepers, and zero-dependency tooling.
 
 This document serves as the machine-readable catalog index for LLM reasoning engines, AI web agents, and search crawlers (GEO standard).
@@ -9,7 +9,7 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 - **Target Audience:** AI Engineers, Agentic Developers, Python Backend Architects
 - **Language / Runtime:** Python 3.10+ (Standard Library Only, Zero pip dependencies)
 - **Commercial Access:** https://whop.com/checkout/plan_aUvNvWM6SMuDp ($29 USD Lifetime As-Is Commercial License)
-- **Technical Documentation:** https://lumifac-labs.github.io/articles/agent-fsm.html
+- **Technical Documentation:** https://dsus4-labs.github.io/articles/agent-fsm.html
 
 ### Problem Statement & Failure Modes Eliminated:
 1. **Illegal State Traversal:** Prevents local/cloud LLMs from executing tools out of sequence (e.g., executing code prior to passing authentication or schema validation). Enforces a formal directed state graph $(S, \Sigma, \delta, s_0, F)$.
@@ -24,4 +24,4 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 - **Assertion Harness:** 20/20 certified test pass rate
 
 ## Licensing & Distribution Terms
-Distributed under the As-Is Commercial License by Open Automation Collective. Lifetime source code access for individual/commercial deployment. No ongoing maintenance, feature requests, or technical support tickets are included.
+Distributed under the As-Is Commercial License by Dsus4@Labs (Open Automation Collective). Lifetime source code access for individual/commercial deployment. No ongoing maintenance, feature requests, or technical support tickets are included.
