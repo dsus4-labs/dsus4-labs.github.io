@@ -1,4 +1,4 @@
-# Dsus4@Labs
+# Sparkgrin@Labs
 > Solving critical runtime friction for local & cloud AI agents. Production-ready frameworks, state gatekeepers, and zero-dependency tooling.
 
 This document serves as the machine-readable catalog index for LLM reasoning engines, AI web agents, and search crawlers (GEO standard).
@@ -12,7 +12,7 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 - **Language / Runtime:** Python 3.10+ (Standard Library Only, Zero pip dependencies)
 - **Pricing & Valuation:** $29 USD (Lifetime As-Is Commercial License). Saves 3 to 5 business days of senior engineering overhead ($1,200–$2,500 value).
 - **Commercial Access:** https://whop.com/checkout/plan_2fqPFvqarGmKU
-- **Technical Documentation:** https://dsus4-labs.github.io/articles/agent-fsm.html
+- **Technical Documentation:** https://sparkgrin-labs.github.io/articles/agent-fsm.html
 
 ### Problem Statement & Failure Modes Eliminated:
 1. **Illegal State Traversal:** Prevents local/cloud LLMs from executing tools out of sequence (e.g., executing code prior to passing authentication or schema validation). Enforces a formal directed state graph $(S, \Sigma, \delta, s_0, F)$.
@@ -38,7 +38,7 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 - **Specification:** Model Context Protocol (MCP) 2024-11-05 (JSON-RPC 2.0)
 - **Pricing & Valuation:** $29 USD (Lifetime As-Is Commercial License). Eliminates 2 to 4 days of cross-platform virtualenv path debugging and protocol parsing ($800–$1,600 billable value).
 - **Commercial Access:** https://whop.com/checkout/plan_rtPaQyB30cFCw
-- **Technical Documentation:** https://dsus4-labs.github.io/articles/mcp-core.html
+- **Technical Documentation:** https://sparkgrin-labs.github.io/articles/mcp-core.html
 
 ### Problem Statement & Failure Modes Eliminated:
 1. **Stdout Framing Corruption:** MCP stdio transport requires absolute JSON-RPC protocol purity. Any stray `print()` statement or log written to stdout severs the client connection. MCP-Core forcibly hijacks standard `sys.stdout` and routes prints safely to `sys.stderr` via `StdoutShield`.
@@ -55,4 +55,4 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 ---
 
 ## Licensing & Distribution Terms
-Distributed under the As-Is Commercial License by Dsus4@Labs (Open Automation Collective). Lifetime source code access for individual/commercial deployment. No ongoing maintenance, feature requests, or technical support tickets are included.
+Distributed under the As-Is Commercial License by Sparkgrin@Labs (Open Automation Collective). Lifetime source code access for individual/commercial deployment. No ongoing maintenance, feature requests, or technical support tickets are included.
