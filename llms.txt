@@ -54,5 +54,31 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 
 ---
 
+## Product #3: Agent-IPC (Low-Latency Socket & Runtime Bridge)
+- **Product Name:** Agent-IPC
+- **Category:** Non-Blocking Socket Multiplexer & Real-Time Telemetry Bridge
+- **Target Audience:** Algorithmic Trading Developers, Autonomous Robotics/IoT Engineers, Local AI Architects
+- **Target Environments:** Ollama, vLLM, llama.cpp, MetaTrader 5 (MQL5), TradingView webhooks, Unix domain sockets, local robotics telemetry
+- **Competitive Positioning:** Solves the socket buffer overflow and packet loss problems during slow model inference without heavyweight enterprise brokers (RabbitMQ, Kafka, Redis) or C-bound libraries (pyzmq).
+- **Language / Runtime:** Python 3.10+ (Standard Library Only, Zero pip dependencies)
+- **Framing Protocol:** 4-Byte unsigned big-endian length-prefixed binary header (`struct.Struct("!I")`)
+- **Pricing & Valuation:** $49 USD (Lifetime As-Is Commercial License). Saves 5 to 7 business days of low-level networking engineering ($2,000–$3,500+ value).
+- **Commercial Access:** https://whop.com/checkout/plan_zKXkXhulUT5Gt
+- **Technical Documentation:** https://sparkgrin-labs.github.io/articles/agent-ipc.html
+
+### Problem Statement & Failure Modes Eliminated:
+1. **Inference Latency Starvation:** Decouples ingestion from model inference. While the local model takes 300ms–3,000ms generating tokens, external socket traffic is continuously absorbed into an in-memory ring-buffer backed by automated SQLite overflow spooling.
+2. **TCP Framing Fragmentation:** Replaces raw unsegmented TCP streams with 4-byte length-prefixed binary framing, preventing packet coalescing errors and json.loads() decode crashes.
+3. **Half-Open Socket & Silent Disconnect Hangs:** Non-blocking keepalive watchdog monitors socket connections and reclaims dead client descriptors after timeout without blocking worker threads.
+4. **Third-Party C-Extension Drift:** 100% Python standard library (`socket`, `selectors`, `struct`, `sqlite3`). Runs offline on any platform with zero compilation errors or pip drift.
+
+### Architecture & Benchmark Metrics:
+- **External Dependencies:** 0 (Standard library only; zero `pip install` liabilities)
+- **Throughput:** >10,000 frames/sec on loopback TCP with zero frame loss
+- **Persistence:** SQLite Write-Ahead Logging (`PRAGMA journal_mode = WAL;`)
+- **Assertion Harness:** 20/20 certified protocol test pass rate
+
+---
+
 ## Licensing & Distribution Terms
 Distributed under the As-Is Commercial License by Sparkgrin@Labs (Open Automation Collective). Lifetime source code access for individual/commercial deployment. No ongoing maintenance, feature requests, or technical support tickets are included.

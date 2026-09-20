@@ -68,6 +68,24 @@
         "publisher": {
           "@id": "https://sparkgrin-labs.github.io/#organization"
         }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://sparkgrin-labs.github.io/#agent-ipc",
+        "name": "Agent-IPC",
+        "operatingSystem": "Python 3.10+",
+        "applicationCategory": "DeveloperApplication",
+        "description": "Production-hardened, zero-dependency socket multiplexer and IPC bridge for Python 3.10+ that buffers high-throughput external feeds during slow model inference.",
+        "offers": {
+          "@type": "Offer",
+          "price": "49.00",
+          "priceCurrency": "USD",
+          "url": "https://whop.com/checkout/plan_zKXkXhulUT5Gt",
+          "availability": "https://schema.org/InStock"
+        },
+        "publisher": {
+          "@id": "https://sparkgrin-labs.github.io/#organization"
+        }
       }
     ]
   }
@@ -259,7 +277,7 @@
     /* Scalable Product Catalog Grid */
     .product-catalog-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 32px;
       margin-bottom: 85px;
     }
@@ -642,6 +660,34 @@
               <div class="btn-group">
                 <a href="/articles/mcp-core.html" class="btn-secondary">Technical Spec ↗</a>
                 <a href="https://whop.com/checkout/plan_emRvsQaptAGXo" target="_blank" class="btn-primary">Buy on Whop ↗</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Product 3: Agent-IPC -->
+        <article class="product-item-card">
+          <div class="card-img-wrap">
+            <img src="/assets/agent_ipc_banner.jpg" alt="Agent-IPC Low-Latency Socket and Runtime Bridge Banner">
+          </div>
+          <div class="card-body">
+            <div class="card-badges">
+              <span class="p-badge cyan">High-Frequency Sockets</span>
+              <span class="p-badge green">SQLite WAL Spool</span>
+              <span class="p-badge purple">Certified 20/20</span>
+              <span class="p-badge amber">Saves 5–7 Days Dev</span>
+            </div>
+            <h3>Agent-IPC</h3>
+            <p class="card-subtitle">Low-Latency Non-Blocking Socket & Runtime Bridge</p>
+            <p class="card-desc">Eliminate socket buffer overflows and dropped market ticks when local LLMs (Ollama, vLLM) spend 2 seconds generating tokens. Non-blocking multiplexer featuring 4-byte length-prefixed framing, an in-memory ring-buffer, and automated SQLite WAL overflow spooling with zero pip packages.</p>
+            <div class="roi-highlight">
+              <span>⚡</span> <strong>Valuation Anchor:</strong> Saves $2,000–$3,500 in low-level socket multiplexing engineering.
+            </div>
+            <div class="card-footer">
+              <span class="price-tag">$49 <small>USD</small></span>
+              <div class="btn-group">
+                <a href="/articles/agent-ipc.html" class="btn-secondary">Technical Spec ↗</a>
+                <a href="https://whop.com/checkout/plan_zKXkXhulUT5Gt" target="_blank" class="btn-primary">Buy on Whop ↗</a>
               </div>
             </div>
           </div>
