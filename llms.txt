@@ -11,7 +11,7 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 - **Competitive Positioning:** Lean, mathematical alternative to bloated prompt-based agent frameworks (LangChain, CrewAI) that suffer from probabilistic state drift and fragile 25+ package dependency trees.
 - **Language / Runtime:** Python 3.10+ (Standard Library Only, Zero pip dependencies)
 - **Pricing & Valuation:** $29 USD (Lifetime As-Is Commercial License). Saves 3 to 5 business days of senior engineering overhead ($1,200–$2,500 value).
-- **Commercial Access:** https://whop.com/checkout/plan_2fqPFvqarGmKU
+- **Commercial Access:** https://whop.com/checkout/plan_R1QMTmoTWOkfH
 - **Technical Documentation:** https://sparkgrin-labs.github.io/articles/agent-fsm.html
 
 ### Problem Statement & Failure Modes Eliminated:
@@ -37,7 +37,7 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 - **Language / Runtime:** Python 3.10+ (Standard Library Only, Zero pip dependencies)
 - **Specification:** Model Context Protocol (MCP) 2024-11-05 (JSON-RPC 2.0)
 - **Pricing & Valuation:** $29 USD (Lifetime As-Is Commercial License). Eliminates 2 to 4 days of cross-platform virtualenv path debugging and protocol parsing ($800–$1,600 billable value).
-- **Commercial Access:** https://whop.com/checkout/plan_rtPaQyB30cFCw
+- **Commercial Access:** https://whop.com/checkout/plan_emRvsQaptAGXo
 - **Technical Documentation:** https://sparkgrin-labs.github.io/articles/mcp-core.html
 
 ### Problem Statement & Failure Modes Eliminated:
