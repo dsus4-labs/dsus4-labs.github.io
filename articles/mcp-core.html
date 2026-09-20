@@ -86,6 +86,20 @@
     ul, ol { margin-bottom: 24px; padding-left: 24px; color: #cbd5e1; }
     li { margin-bottom: 8px; }
 
+    table { width: 100%; border-collapse: collapse; margin: 24px 0 32px; font-size: 0.95rem; }
+    th, td { border: 1px solid var(--border); padding: 12px 16px; text-align: left; }
+    th { background: rgba(15, 23, 42, 0.85); color: #38bdf8; font-weight: 700; }
+    tr:nth-child(even) { background: rgba(255, 255, 255, 0.02); }
+    .roi-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 28px 0;
+    }
+    .roi-box h4 { color: #34d399; margin-bottom: 8px; font-size: 1.1rem; }
+    .roi-box p { color: #e2e8f0; margin-bottom: 0; font-size: 0.95rem; }
+
     pre { background: #030712; border: 1px solid var(--border); border-radius: 8px; padding: 18px; overflow-x: auto; margin-bottom: 24px; }
     code { font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.9rem; color: #38bdf8; }
     
@@ -179,6 +193,63 @@ if __name__ == "__main__":
       <li><strong>Thread Pool Defensive Timeouts:</strong> All tool invocations execute inside a defensive <code>ThreadPoolExecutor</code>. Hanging tools are interrupted and return clean <code>isError=True</code> content blocks, preventing host LLMs from freezing.</li>
       <li><strong>Embedded SQLite Black-Box Flight Recorder:</strong> Automatically logs method, tool name, argument payload, latency, and status to <code>mcp_audit.db</code> for post-incident debugging.</li>
     </ol>
+
+    <h2>The "15+ Dependency Trap" of Official MCP SDKs</h2>
+    <p>The official Python Model Context Protocol SDK requires <strong>15+ external packages</strong> (<code>anyio</code>, <code>pydantic</code>, <code>starlette</code>, <code>httpx</code>, <code>sse-starlette</code>, <code>uvicorn</code>). For developers building private toolkits, database connectors, and local execution bridges in <strong>Claude Desktop and Cursor</strong>, this introduces severe operational friction:</p>
+    <ul>
+      <li><strong>Virtual Environment Fragility:</strong> Forcing developers to manage isolated virtual environments and hardcode delicate <code>.venv</code> interpreter paths in <code>claude_desktop_config.json</code> that routinely break across OS updates or directory moves.</li>
+      <li><strong>Silent Desktop Crashes:</strong> Any rogue <code>print()</code> statement from an imported library contaminates the raw stdout JSON-RPC stream, causing Claude Desktop and Cursor to sever connections without helpful diagnostics.</li>
+      <li><strong>Async Cancellation Pitfalls:</strong> Deep async runtime dependencies make graceful tool cancellation and hard timeout interrupts notoriously difficult to synchronize cleanly.</li>
+    </ul>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Engineering Dimension</th>
+          <th>Official Python MCP SDK</th>
+          <th>Build Custom From Scratch</th>
+          <th>MCP-Core (Dsus4@Labs)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>External Dependencies</strong></td>
+          <td>15+ packages (anyio, starlette, httpx)</td>
+          <td>Custom</td>
+          <td><strong>0 (100% Python Standard Library)</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Desktop Client Framing</strong></td>
+          <td>Vulnerable to rogue stdout <code>print()</code></td>
+          <td>Custom piping</td>
+          <td><strong>StdoutShield Protocol Pipe Isolation</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Tool Execution Sandboxing</strong></td>
+          <td>Cooperative async cancellation</td>
+          <td>Threadpool locks</td>
+          <td><strong>Managed ThreadPoolExecutor with Hard Timeouts</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Audit & Telemetry Logging</strong></td>
+          <td>Manual loguru or logging setup</td>
+          <td>Custom database</td>
+          <td><strong>Embedded SQLite WAL Mode (&lt;0.05ms dispatch)</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Engineering Time Required</strong></td>
+          <td>Hours of virtualenv path debugging</td>
+          <td>2–4 Days ($800–$1,600)</td>
+          <td><strong>Instant 5-Minute Drop-In ($29 USD)</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Engineering ROI: Build vs. Buy Valuation</h2>
+    <div class="roi-box">
+      <h4>💡 Build vs. Buy Economic Valuation</h4>
+      <p>Setting up, debugging virtual environment path issues across macOS/Windows/Linux, implementing thread-safe JSON-RPC 2.0 protocol parsers, and adding defensive tool sandboxing from scratch costs an engineer <strong>2 to 4 days ($800–$1,600 in billable engineering time)</strong>. At $29 for an offline, single-file drop-in runtime with a lifetime As-Is commercial license and 20/20 certified test suite, MCP-Core provides permanent, zero-maintenance utility and an immediate <strong>96%+ cost reduction</strong>.</p>
+    </div>
 
     <!-- CTA Section -->
     <div class="cta-card">
