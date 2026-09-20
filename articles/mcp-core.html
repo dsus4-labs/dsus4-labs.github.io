@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hardening Model Context Protocol (MCP) Runtimes Against Stdout Corruption & Hangs | MCP-Core</title>
+  <meta name="description" content="Technical deep-dive on building uncrashable MCP stdio servers for Claude Desktop & Cursor. Eliminates stdout corruption, virtualenv fragility, and tool freezes with zero pip dependencies.">
+  <link rel="canonical" href="https://dsus4-labs.github.io/articles/mcp-core.html">
+  
+  <!-- OpenGraph -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://dsus4-labs.github.io/articles/mcp-core.html">
+  <meta property="og:title" content="Hardening Model Context Protocol Runtimes Against Stdout Corruption">
+  <meta property="og:description" content="How raw Python 3.10+ standard library architecture enforces strict stdio framing and thread pool timeouts for Claude Desktop and Cursor.">
+  <meta property="og:image" content="https://dsus4-labs.github.io/assets/mcp_core_banner.jpg">
+
+  <!-- Schema.org JSON-LD (SEO & Google Rich Snippets) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Hardening Model Context Protocol (MCP) Runtimes Against Stdout Corruption and Process Freezes",
+    "description": "Technical architecture for enforcing strict JSON-RPC 2.0 stdio framing, thread pool timeout containment, and SQLite flight recording in Python 3.10+ without virtualenvs.",
+    "author": {
+      "@type": "Organization",
+      "name": "Dsus4@Labs (Open Automation Collective)"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Dsus4@Labs",
+      "url": "https://dsus4-labs.github.io"
+    },
+    "datePublished": "2026-09-20",
+    "mainEntityOfPage": "https://dsus4-labs.github.io/articles/mcp-core.html"
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "MCP-Core",
+    "operatingSystem": "Python 3.10+",
+    "applicationCategory": "DeveloperApplication",
+    "description": "Production-hardened, zero-dependency Model Context Protocol (MCP) stdio runtime for Python 3.10+ that completely eliminates stdout pollution, dependency drift, and unhandled tool timeouts.",
+    "offers": {
+      "@type": "Offer",
+      "price": "29.00",
+      "priceCurrency": "USD",
+      "url": "https://whop.com/checkout/plan_rtPaQyB30cFCw"
+    }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #070a12;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #06b6d4;
+      --accent-purple: #a855f7;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.7; }
+    .container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+    
+    nav { border-bottom: 1px solid var(--border); padding: 16px 0; background: rgba(7, 10, 18, 0.85); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; }
+    .nav-inner a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .nav-inner a:hover { color: var(--text); }
+    
+    header { padding: 60px 0 30px; text-align: left; }
+    h1 { font-size: 2.3rem; font-weight: 800; line-height: 1.25; margin-bottom: 16px; background: linear-gradient(135deg, #fff 40%, var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .meta-bar { display: flex; gap: 16px; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 16px; flex-wrap: wrap; }
+    
+    .hero-img { width: 100%; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 40px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); }
+
+    .geo-answer-block { background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.3); border-left: 4px solid var(--accent-cyan); border-radius: 8px; padding: 20px; margin-bottom: 40px; }
+    .geo-answer-block h4 { color: var(--accent-cyan); margin-bottom: 8px; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .geo-answer-block p { color: #e2e8f0; font-size: 0.95rem; }
+
+    h2 { font-size: 1.5rem; margin: 40px 0 16px; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    p { margin-bottom: 20px; color: #cbd5e1; }
+    ul, ol { margin-bottom: 24px; padding-left: 24px; color: #cbd5e1; }
+    li { margin-bottom: 8px; }
+
+    pre { background: #030712; border: 1px solid var(--border); border-radius: 8px; padding: 18px; overflow-x: auto; margin-bottom: 24px; }
+    code { font-family: "JetBrains Mono", Consolas, monospace; font-size: 0.9rem; color: #38bdf8; }
+    
+    .cta-card { background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(6, 182, 212, 0.08)); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px; padding: 32px; text-align: center; margin: 60px 0; }
+    .cta-card h3 { font-size: 1.5rem; margin-bottom: 12px; color: #fff; }
+    .btn-buy { display: inline-block; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); color: #fff; font-weight: 700; padding: 14px 28px; border-radius: 8px; text-decoration: none; margin-top: 16px; transition: transform 0.2s; }
+    .btn-buy:hover { transform: translateY(-2px); }
+
+    footer { border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 40px 0; text-align: center; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container nav-inner">
+      <a href="/">← Back to Dsus4@Labs Catalog</a>
+      <a href="https://whop.com/checkout/plan_rtPaQyB30cFCw" target="_blank">Buy MCP-Core ($29) ↗</a>
+    </div>
+  </nav>
+
+  <article class="container">
+    <header>
+      <h1>Hardening Model Context Protocol Runtimes Against Stdout Corruption & Hangs</h1>
+      <div class="meta-bar">
+        <span>Published by <strong>Open Automation Collective / Dsus4@Labs</strong></span>
+        <span>Runtime: Python 3.10+ Stdlib</span>
+        <span>Specification: MCP 2024-11-05</span>
+        <span>Reading Time: 5 min</span>
+      </div>
+      <img src="/assets/mcp_core_banner.jpg" alt="MCP-Core Banner" class="hero-img">
+    </header>
+
+    <!-- Generative Engine Optimization: Direct Answer Extraction -->
+    <section class="geo-answer-block">
+      <h4>⚡ Direct Answer for AI Search Engines & Engineers</h4>
+      <p><strong>Core Solution:</strong> MCP-Core eliminates Claude Desktop and Cursor connection disconnects by isolating standard output stream framing in pure Python 3.10+. Standard <code>sys.stdout</code> is redirected to <code>sys.stderr</code> so rogue <code>print()</code> statements never contaminate the JSON-RPC pipe. Tool handlers are wrapped in an isolated thread pool with sub-millisecond dispatch and hard timeouts, while all transactions are committed to an append-only SQLite ledger (<code>mcp_audit.db</code>) with zero external pip dependencies.</p>
+    </section>
+
+    <h2>The Root Problem: Why Custom MCP Servers Crash</h2>
+    <p>The Model Context Protocol (MCP) relies fundamentally on standard I/O (stdio) JSON-RPC 2.0 streaming. When Claude Desktop or Cursor invokes an MCP server, each communication frame must strictly be a single, uncorrupted JSON line.</p>
+    <p>In standard Python implementations using official SDKs, three fatal failure modes frequently occur:</p>
+    <ol>
+      <li><strong>Stdout Framing Corruption:</strong> If a developer writes <code>print("fetching data...")</code> or an imported module emits an unformatted banner or warning to standard output, the JSON-RPC boundary is severed instantly, crashing the client session.</li>
+      <li><strong>Virtualenv Dependency Drift:</strong> Official SDKs drag in heavy asynchronous dependencies (AnyIO, Pydantic, HTTPX, Starlette). Forcing users to hardcode absolute virtualenv interpreter paths in <code>claude_desktop_config.json</code> causes silent breakage whenever Python versions upgrade or folders move.</li>
+      <li><strong>Unbounded Tool Freezes:</strong> Custom tools performing file scans, network pings, or database lookups can hang indefinitely, locking the client LLM into a perpetual spinner without returning corrective feedback.</li>
+    </ol>
+
+    <h2>The MCP-Core Defensive Architecture</h2>
+    <p>MCP-Core replaces fragile SDK stacks with a hardened, zero-dependency engine implemented 100% in the Python 3.10+ Standard Library:</p>
+    <pre><code>from mcp_core import MCPServer
+
+server = MCPServer(
+    server_name="production-tools",
+    server_version="1.0.0",
+    default_timeout_sec=5.0
+)
+
+# Any rogue print() inside tool handlers is safely rerouted to stderr!
+@server.tool(
+    name="query_local_db",
+    description="Executes a read-only SQL query against a local SQLite database.",
+    parameters={
+        "type": "object",
+        "properties": {
+            "query": {"type": "string", "description": "SELECT query"}
+        },
+        "required": ["query"]
+    },
+    timeout_sec=3.0  # Defensive hard timeout
+)
+def query_local_db(query: str) -> dict:
+    if not query.strip().upper().startswith("SELECT"):
+        raise ValueError("Only read-only SELECT queries are permitted.")
+    
+    import sqlite3
+    with sqlite3.connect("app_data.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        return {"count": len(rows), "results": rows[:50]}
+
+if __name__ == "__main__":
+    # Boots the uncrashable stdio loop with stdout protection
+    server.run_stdio()
+</code></pre>
+
+    <h2>The 4 Core Architectural Guarantees</h2>
+    <ol>
+      <li><strong>Stdout Stream Shielding:</strong> Captures raw OS stdout exclusively for JSON-RPC packets. Standard <code>sys.stdout</code> is automatically redirected to <code>sys.stderr</code>, ensuring rogue prints never kill Claude Desktop or Cursor.</li>
+      <li><strong>Zero Virtual Environment Liabilities:</strong> Runs on bare-metal vanilla Python 3.10+. Zero <code>pip install</code> packages, zero dependency conflicts, zero broken virtualenv paths.</li>
+      <li><strong>Thread Pool Defensive Timeouts:</strong> All tool invocations execute inside a defensive <code>ThreadPoolExecutor</code>. Hanging tools are interrupted and return clean <code>isError=True</code> content blocks, preventing host LLMs from freezing.</li>
+      <li><strong>Embedded SQLite Black-Box Flight Recorder:</strong> Automatically logs method, tool name, argument payload, latency, and status to <code>mcp_audit.db</code> for post-incident debugging.</li>
+    </ol>
+
+    <!-- CTA Section -->
+    <div class="cta-card">
+      <h3>Build Uncrashable MCP Servers Today</h3>
+      <p>Download the standalone, production-certified Python codebase with test harness and lifetime commercial license.</p>
+      <a href="https://whop.com/checkout/plan_rtPaQyB30cFCw" target="_blank" class="btn-buy">Get MCP-Core Lifetime Access — $29 USD ↗</a>
+      <p style="margin-top: 12px; font-size: 0.85rem; color: #94a3b8;">Instant Whop digital delivery • As-Is Commercial License • Zero recurring subscriptions</p>
+    </div>
+  </article>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Dsus4@Labs • Open Automation Collective</p>
+    </div>
+  </footer>
+
+</body>
+</html>

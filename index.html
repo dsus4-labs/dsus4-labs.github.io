@@ -22,26 +22,48 @@
 
   <!-- Schema.org JSON-LD (SEO & Google Rich Snippets) -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Agent-FSM",
-    "operatingSystem": "Python 3.10+",
-    "applicationCategory": "DeveloperApplication",
-    "description": "Hardened, zero-dependency Finite State Machine runtime for Python 3.10+ that forces local and autonomous LLM agents into mathematically deterministic, schema-validated execution paths.",
-    "offers": {
-      "@type": "Offer",
-      "price": "29.00",
-      "priceCurrency": "USD",
-      "url": "https://whop.com/checkout/plan_2fqPFvqarGmKU",
-      "availability": "https://schema.org/InStock"
+  [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Agent-FSM",
+      "operatingSystem": "Python 3.10+",
+      "applicationCategory": "DeveloperApplication",
+      "description": "Hardened, zero-dependency Finite State Machine runtime for Python 3.10+ that forces local and autonomous LLM agents into mathematically deterministic, schema-validated execution paths.",
+      "offers": {
+        "@type": "Offer",
+        "price": "29.00",
+        "priceCurrency": "USD",
+        "url": "https://whop.com/checkout/plan_2fqPFvqarGmKU",
+        "availability": "https://schema.org/InStock"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Dsus4@Labs (Open Automation Collective)",
+        "url": "https://dsus4-labs.github.io"
+      }
     },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Dsus4@Labs (Open Automation Collective)",
-      "url": "https://dsus4-labs.github.io"
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "MCP-Core",
+      "operatingSystem": "Python 3.10+",
+      "applicationCategory": "DeveloperApplication",
+      "description": "Production-hardened, zero-dependency Model Context Protocol (MCP) stdio runtime for Python 3.10+ that completely eliminates stdout pollution, dependency drift, and unhandled tool timeouts.",
+      "offers": {
+        "@type": "Offer",
+        "price": "29.00",
+        "priceCurrency": "USD",
+        "url": "https://whop.com/checkout/plan_rtPaQyB30cFCw",
+        "availability": "https://schema.org/InStock"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Dsus4@Labs (Open Automation Collective)",
+        "url": "https://dsus4-labs.github.io"
+      }
     }
-  }
+  ]
   </script>
 
   <style>
@@ -331,10 +353,135 @@
     }
     footer a { color: var(--cyan); text-decoration: none; }
 
+    /* Product Catalog Grid */
+    .product-catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      margin-bottom: 70px;
+    }
+    .product-item-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .product-item-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(6, 182, 212, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+    .card-img-wrap {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+      background: #020617;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-badges {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .p-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .p-badge.cyan { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+    .p-badge.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .p-badge.green { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+    .product-item-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+    .card-subtitle {
+      font-size: 0.88rem;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 20px;
+      flex: 1;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .price-tag {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .price-tag small {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #e2e8f0;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    }
+
     @media (max-width: 768px) {
       .hero h1 { font-size: 2.2rem; }
       .metrics-strip { grid-template-columns: repeat(2, 1fr); }
       .grid-failures { grid-template-columns: 1fr; }
+      .product-catalog-grid { grid-template-columns: 1fr; }
       .geo-box { flex-direction: column; text-align: center; }
     }
   </style>
@@ -349,9 +496,10 @@
         Dsus4<span>@Labs</span>
       </a>
       <div class="nav-links">
-        <a href="/articles/agent-fsm.html">Technical Spec</a>
+        <a href="#products">Catalog</a>
+        <a href="/articles/agent-fsm.html">Agent-FSM</a>
+        <a href="/articles/mcp-core.html">MCP-Core</a>
         <a href="/llms.txt">llms.txt</a>
-        <a href="https://whop.com/checkout/plan_2fqPFvqarGmKU" target="_blank" class="btn-buy-nav">Get Agent-FSM ($29) ↗</a>
       </div>
     </div>
   </nav>
@@ -429,6 +577,58 @@ def setup_workspace(repo_url: str):
 fsm.transition_to(AgentState.INITIALIZING)
 result = fsm.dispatch("setup_workspace", {"repo_url": "https://github.com/example/repo"})
 </code></pre>
+    </div>
+
+    <!-- Product Catalog Section -->
+    <h2 class="section-title" id="products">Production Agent Tooling Catalog</h2>
+    <div class="product-catalog-grid">
+      <!-- Product 1: Agent-FSM -->
+      <div class="product-item-card">
+        <div class="card-img-wrap">
+          <img src="/assets/agent_fsm_banner.jpg" alt="Agent-FSM Banner">
+        </div>
+        <div class="card-body">
+          <div class="card-badges">
+            <span class="p-badge cyan">Agentic FSM</span>
+            <span class="p-badge purple">Zero Dependencies</span>
+            <span class="p-badge green">Certified 20/20</span>
+          </div>
+          <h3>Agent-FSM</h3>
+          <p class="card-subtitle">Deterministic State Machine & Action Gatekeeper</p>
+          <p class="card-desc">Forces local and autonomous LLM agents into mathematically deterministic state graphs. Eliminates sequence jumping, halts context loops, and records atomic SQLite crash checkpoints.</p>
+          <div class="card-footer">
+            <span class="price-tag">$29 <small>USD</small></span>
+            <div class="btn-group">
+              <a href="/articles/agent-fsm.html" class="btn-secondary">Spec ↗</a>
+              <a href="https://whop.com/checkout/plan_2fqPFvqarGmKU" target="_blank" class="btn-primary">Buy Now ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product 2: MCP-Core -->
+      <div class="product-item-card">
+        <div class="card-img-wrap">
+          <img src="/assets/mcp_core_banner.jpg" alt="MCP-Core Banner">
+        </div>
+        <div class="card-body">
+          <div class="card-badges">
+            <span class="p-badge cyan">MCP 2024-11-05</span>
+            <span class="p-badge purple">Stdout Shield</span>
+            <span class="p-badge green">Certified 20/20</span>
+          </div>
+          <h3>MCP-Core</h3>
+          <p class="card-subtitle">Zero-Dependency Model Context Protocol Runtime</p>
+          <p class="card-desc">Build rock-solid MCP servers for Claude Desktop & Cursor without virtualenv bloat. Eliminates stdout framing corruption, isolates tool timeouts, and records black-box SQLite flight logs.</p>
+          <div class="card-footer">
+            <span class="price-tag">$29 <small>USD</small></span>
+            <div class="btn-group">
+              <a href="/articles/mcp-core.html" class="btn-secondary">Spec ↗</a>
+              <a href="https://whop.com/checkout/plan_rtPaQyB30cFCw" target="_blank" class="btn-primary">Buy Now ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- CTA Box -->
