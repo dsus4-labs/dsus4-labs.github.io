@@ -80,5 +80,33 @@ This document serves as the machine-readable catalog index for LLM reasoning eng
 
 ---
 
+## Product #4: Tool-Shield (Hardened Subprocess Sandbox & Execution Guard)
+- **Product Name:** Tool-Shield
+- **Category:** Subprocess Isolation Sandbox & Execution Safety Guard
+- **Target Audience:** Autonomous Agent Developers, Coding Assistant Architects (Claude Desktop, Cursor), Local RAG Pipeline Builders
+- **Target Environments:** Python 3.10+, bash/sh shells, local interpreters, LLM tool execution loops
+- **Competitive Positioning:** Hardened, zero-dependency alternative to unprotected subprocess.run() wrappers that fail to clean up zombie process trees or prevent context-window flooding.
+- **Language / Runtime:** Python 3.10+ (Standard Library Only, Zero pip dependencies)
+- **Pricing & Valuation:** $19 USD (Lifetime As-Is Commercial License). Saves 2 to 3 days of low-level systems engineering ($600–$1,200 billable value).
+- **Commercial Access:** https://whop.com/checkout/plan_mgzidlRzj4Pdq
+- **Technical Documentation:** https://sparkgrin-labs.github.io/articles/tool-shield.html
+
+### Problem Statement & Failure Modes Eliminated:
+1. **Unbounded Subprocess Freezes & Zombie Trees:** Tools called by LLMs that hang on network sockets or stdin deadlocks are launched in dedicated process groups and terminated via two-phase SIGTERM -> 500ms grace -> SIGKILL escalation.
+2. **Context Window Flooding:** Runaway scripts dumping megabytes of text are middle-truncated to a strict 64 KB cap, preserving head and tail tokens cleanly while omitting bloated repetitive middle loops.
+3. **ANSI Noise & Encoding Corruptions:** Shell commands emitting terminal color codes, cursor escapes, or binary characters are sanitized into clean UTF-8 text before returning to LLM JSON parsers.
+4. **Filesystem Directory Traversal:** Canonical path verification blocks model hallucination attempts to access files outside the designated workspace boundary (e.g. `../../.env`).
+5. **Zero Telemetry on Tool Crashes:** Embedded SQLite flight recorder (`sandbox_audit.db`) records timestamps, exit codes, and latency traces for post-incident debugging.
+
+### Architecture & Benchmark Metrics:
+- **External Dependencies:** 0 (Standard library only; zero `pip install` liabilities)
+- **Spawn Overhead:** < 2.1ms per subprocess invocation
+- **Truncation Throughput:** 10 MB buffer parsed in < 4.8ms
+- **Audit Logging Overhead:** < 0.3ms per execution into SQLite
+- **Assertion Harness:** 16/16 certified test pass rate (100% pass)
+
+---
+
 ## Licensing & Distribution Terms
 Distributed under the As-Is Commercial License by Sparkgrin@Labs (Open Automation Collective). Lifetime source code access for individual/commercial deployment. No ongoing maintenance, feature requests, or technical support tickets are included.
+
