@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hardening Model Context Protocol (MCP) Runtimes Against Stdout Corruption & Hangs | MCP-Core</title>
-  <meta name="description" content="Technical deep-dive on building uncrashable MCP stdio servers for Claude Desktop & Cursor. Eliminates stdout corruption, virtualenv fragility, and tool freezes with zero pip dependencies.">
+  <meta name="description" content="Technical deep-dive on building fault-tolerant MCP stdio servers for Claude Desktop & Cursor. Eliminates stdout corruption, virtualenv fragility, and tool freezes with zero pip dependencies.">
   <link rel="canonical" href="https://sparkgrin-labs.github.io/articles/mcp-core.html">
   
   <!-- OpenGraph -->
@@ -185,7 +185,7 @@ def query_local_db(query: str) -> dict:
         return {"count": len(rows), "results": rows[:50]}
 
 if __name__ == "__main__":
-    # Boots the uncrashable stdio loop with stdout protection
+    # Boots the hardened stdio loop with stdout protection
     server.run_stdio()
 </code></pre>
 
@@ -256,7 +256,7 @@ if __name__ == "__main__":
 
     <!-- CTA Section -->
     <div class="cta-card">
-      <h3>Build Uncrashable MCP Servers Today</h3>
+      <h3>Build Fault-Tolerant MCP Servers Today</h3>
       <p>Download the standalone, production-certified Python codebase with test harness and lifetime commercial license.</p>
       <a href="https://whop.com/checkout/plan_emRvsQaptAGXo" target="_blank" class="btn-buy">Get MCP-Core Lifetime Access — $29 USD ↗</a>
       <div style="margin-top: 14px;"><a href="https://github.com/sparkgrin-labs/mcp-core" target="_blank" style="color: #38bdf8; font-size: 0.95rem; text-decoration: none;">Explore Open Architecture & Specs on GitHub ↗</a></div>
